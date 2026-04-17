@@ -1,0 +1,131 @@
+clear; clc; close all
+
+thisFile = which(mfilename);
+scriptDir = fileparts(thisFile);
+repoRoot = fileparts(fileparts(scriptDir));
+
+addpath(fullfile(repoRoot, 'config'));
+addpath(fullfile(repoRoot, 'phase1_anatomy', 'functions'));
+
+P = paths_local();
+
+disp("===repoRoot===")
+disp(repoRoot)
+disp("===P.dataRaw===")
+disp(P.dataRaw)
+
+if ~isfolder(P.dataRaw)
+    error('P.dataRaw 폴더 없음: %s', P.dataRaw);
+end
+
+d = dir(P.dataRaw);
+isSub = [d.isdir];
+caseNames = {d(isSub).name};
+caseNames = caseNames(~ismember(caseNames, {'.','..'}));
+caseNames = sort(caseNames);
+
+if isempty(caseNames)
+    error('P.dataRaw 환자 폴더 없음');
+end
+
+disp("===batch 대상 Case===");
+disp(casenames')
+
+nCase = numel(caseNames);
+
+%결과 저장 변수
+patient_id = strings(nCase,1);
+la_volume_ml = nan(nCase,1);
+
+img_size_x = nan(nCase,1);
+img_size_y = nan(nCase,1);
+img_size_z = nan(nCase,1);
+
+spacing_x = nan(nCase,1);
+spacing_y = nan(nCase,1);
+spacing_z = nan(nCase,1);
+
+bbox_x_mm = nan(nCase,1);
+bbox_y_mm = nan(nCase,1);
+bbox_z_mm = nan(nCase,1);
+
+bbox_x_vox = nan(nCase,1);
+bbox_y_vox = nan(nCase,1);
+bbox_z_vox = nan(nCase,1);
+
+status = strings(nCase,1);
+message = strings(nCase,1);
+
+if ~exist(P.outTable, 'dir')
+    mkdir(P.outTable);
+end
+
+if ~exist(P.outPng, 'dir')
+    mkdir(P.outPng);
+end
+
+for i = i:nCase
+    caseName = caseNames{i};
+    patient_id(i) = string(caseName);
+
+    fprintf('\n[%d/%d] Processing %s ...\n', i, nCase, caseName);
+
+    try
+        casePath = fullfile(P.dataRaw, caseName);
+        
+        imgPath = fullfile(casePath, 'lgemri.nrrd');
+        labPath = fullfile(casePath, 'laendo.nrrd');
+        
+        if ~isfile(imgPath)
+            error('MRI 파일 없음: %s', imgPath);
+        end
+
+        if ~isfile(labPath)
+            error('라벨 파일 없음: %s', labPath);
+        end
+
+        imgInfo = nrrdinfo(imgPath);
+        labInfo = nrrdinfo(labPath);
+
+        imgVol = nrrdread(imgPath);
+        labVol = nrrdread(labPath);
+
+        sz = size(imgVol);
+        img_size_x(i) = sz(1);
+        img_size_y(i) = sz(2);
+        img_size_z(i) = sz(3);
+
+        if isfield(labInfo, 'PixelDimensions')
+            spacing = labInfo.PixelDimensions;
+            spacing_x(i) = spacing(1);
+            spacing_y(i) = spacing(2);
+            spacing_z(i) = spacing(3);
+        else
+            error('labInfo 안에 PixelDimensions 필드에 없다.');
+        end
+
+        la_volume_ml(i) = compute_la_volume_nrrd(labVol, labInfo);
+
+        [bbox_x_mm(i), bbox_y_mm(i), bbox_z_mm(i), bbox_x_vox(i), bbox_y_vox(i), bbox_z_vox(i)] = compute_bbox_features_nrrd(labVol, labInfo);
+
+        status(i) = "OK";
+        message(i) = "";
+
+        if i <= 3
+            midSlice = round(size(imgVol,3)/2);
+            labMask = labVol > 0;
+
+            f = figure('Visible','off');
+            imshow(imgvol(:,:,midSlice),[]);
+            hold on;
+            contour(double(labMask(:,:,midSlice)), [0.5 0.5], 'r', 'LineWidth', 1.5);
+            title(['MRI + Label overlay - ', caseName]);
+
+            saveas(f, fullfile(P.outPng, sprintf('%s_overlay_mid.png',caseName)));
+        end
+
+        fprintf('  -> LA Volume = %.2f mL | bbox = [%.1f, %.1f, %.1f] mm\n', la_volume_ml(i), bbox_x_mm(i), bbox_y_mm(i), bbox_z_mm(i));
+
+    catch ME
+        
+

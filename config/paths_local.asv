@@ -1,0 +1,4 @@
+function P = paths_local()
+    P.repoRoot = fileparts(fileparts(mfilename('fullpath')));
+    P.dataRaw = fullfile(P.repoRoot, 'data_external', 'atriaset_raw');
+    P.dataNifti = fullfile(P.repoRoot,)

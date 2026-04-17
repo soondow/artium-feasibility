@@ -1,0 +1,6 @@
+patient_id,la_volume_ml,bbox_x_mm,bbox_y_mm,bbox_z_mm,bbox_x_vox,bbox_y_vox,bbox_z_vox,img_size_x,img_size_y,img_size_z,spacing_x,spacing_y,spacing_z,status,message
+Case_001,146.217,156,76,56,156,76,56,640,640,88,1,1,1,OK,
+Case_002,252.364,171,93,56,171,93,56,576,576,88,1,1,1,OK,
+Case_003,202.317,177,111,52,177,111,52,640,640,88,1,1,1,OK,
+Case_004,143.877,151,77,56,151,77,56,640,640,88,1,1,1,OK,
+Case_005,146.217,156,76,56,156,76,56,640,640,88,1,1,1,OK,

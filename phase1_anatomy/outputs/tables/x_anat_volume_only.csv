@@ -1,0 +1,6 @@
+patient_id,la_volume_ml,img_size_x,img_size_y,img_size_z,spacing_x,spacing_y,spacing_z,status,message
+Case_001,146.217,640,640,88,1,1,1,OK,
+Case_002,252.364,576,576,88,1,1,1,OK,
+Case_003,202.317,640,640,88,1,1,1,OK,
+Case_004,143.877,640,640,88,1,1,1,OK,
+Case_005,146.217,640,640,88,1,1,1,OK,

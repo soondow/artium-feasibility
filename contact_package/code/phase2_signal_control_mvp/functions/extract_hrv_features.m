@@ -1,5 +1,5 @@
 function F = extract_hrv_features(rriMs, validMask)
-%EXTRACT_HRV_FEATURES Compute compact HRV and irregularity features.
+%EXTRACT_HRV_FEATURES 간결한 HRV 및 irregularity feature를 계산한다.
 
     if nargin < 2 || isempty(validMask)
         validMask = ~isnan(rriMs(:));

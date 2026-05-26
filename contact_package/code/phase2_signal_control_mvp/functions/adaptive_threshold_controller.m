@@ -1,10 +1,10 @@
 function C = adaptive_threshold_controller(riskProxy, xHat, U, q, params, coverage)
-%ADAPTIVE_THRESHOLD_CONTROLLER Compare raw fixed alerts with quality-aware alerts.
+%ADAPTIVE_THRESHOLD_CONTROLLER 원시 fixed alert와 quality-aware alert를 비교한다.
 %
-% The fixed baseline thresholds raw HRV risk directly. The proposed
-% controller thresholds the observer state only when the signal is reliable.
-% Suspicious but unreliable windows are routed to confirmation or additional
-% data collection instead of becoming direct alerts.
+% fixed baseline은 원시 HRV risk를 직접 thresholding한다. 제안 제어기는
+% signal이 신뢰 가능할 때만 observer state를 thresholding한다.
+% 의심스럽지만 신뢰도가 낮은 window는 direct alert가 아니라 confirmation 또는
+% 추가 데이터 수집 요청으로 보낸다.
 
     if nargin < 5 || isempty(params)
         params = struct();
@@ -153,8 +153,8 @@ function C = adaptive_threshold_controller(riskProxy, xHat, U, q, params, covera
         policy(k) = candidatePolicy;
     end
 
-    % Final policy synchronization: policy labels must always be derived
-    % from final action masks, never only from intermediate candidates.
+    % 최종 policy 동기화: policy label은 항상 최종 action mask에서
+    % 유도해야 하며, 중간 candidate만으로 정하면 안 된다.
     policy = deriveFinalPolicy(adaptiveAlert, requestMoreData, requestConfirmation);
 
     C = table(fixedThreshold, adaptiveThreshold, fixedAlert, adaptiveAlert, ...

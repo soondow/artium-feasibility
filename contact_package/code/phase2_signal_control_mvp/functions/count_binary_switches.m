@@ -1,5 +1,5 @@
 function switchCount = count_binary_switches(mask)
-%COUNT_BINARY_SWITCHES Count on/off transitions in a logical mask.
+%COUNT_BINARY_SWITCHES logical mask의 on/off transition 횟수를 센다.
 
     mask = logical(mask(:));
 

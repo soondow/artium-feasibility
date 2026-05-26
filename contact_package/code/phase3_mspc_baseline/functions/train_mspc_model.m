@@ -1,5 +1,5 @@
 function model = train_mspc_model(XTrain, explainedVarianceTarget)
-%TRAIN_MSPC_MODEL Train a compact PCA/MSPC normal-operating-condition model.
+%TRAIN_MSPC_MODEL 간결한 PCA/MSPC 정상운전조건 모델을 학습한다.
 
     if nargin < 2 || isempty(explainedVarianceTarget)
         explainedVarianceTarget = 0.90;

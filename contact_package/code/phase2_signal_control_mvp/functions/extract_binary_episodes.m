@@ -1,9 +1,9 @@
 function E = extract_binary_episodes(mask, mergeGapWindows)
-%EXTRACT_BINARY_EPISODES Convert a binary window mask into contiguous episodes.
+%EXTRACT_BINARY_EPISODES binary window mask를 연속 episode로 변환한다.
 %
-% E = extract_binary_episodes(mask) returns start/stop indices for each
-% contiguous true region. E = extract_binary_episodes(mask, N) merges
-% episodes separated by N or fewer false windows.
+% E = extract_binary_episodes(mask)는 각 연속 true 구간의 start/stop index를
+% 반환한다. E = extract_binary_episodes(mask, N)은 false window가 N개 이하로
+% 떨어져 있는 episode들을 병합한다.
 
     if nargin < 2 || isempty(mergeGapWindows)
         mergeGapWindows = 0;

@@ -1,5 +1,5 @@
 function W = segment_rri_windows(S, beatsPerWindow, strideBeats)
-%SEGMENT_RRI_WINDOWS Split a beat-level synthetic RRI stream into windows.
+%SEGMENT_RRI_WINDOWS beat 단위 synthetic RRI stream을 window로 나눈다.
 
     if nargin < 2 || isempty(beatsPerWindow)
         beatsPerWindow = 60;

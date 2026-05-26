@@ -36,9 +36,9 @@ set_param(modelName, 'StopTime', '80');
 set_param(modelName, 'Solver', 'FixedStepDiscrete');
 set_param(modelName, 'FixedStep', '1');
 
-% Numeric step-function scenario:
-% t=20..55 has high raw irregularity risk but low signal quality.
-% The controller should request confirmation/data instead of direct alert.
+% Numeric step-function 시나리오:
+% t=20..55 구간은 원시 irregularity risk가 높지만 signal quality가 낮다.
+% 제어기는 direct alert 대신 confirmation/data 요청을 내야 한다.
 add_block('simulink/Sources/Constant', [modelName '/base_risk_0p15'], ...
     'Value', '0.15', 'Position', [40 65 105 95]);
 add_block('simulink/Sources/Step', [modelName '/artifact_risk_step_up'], ...

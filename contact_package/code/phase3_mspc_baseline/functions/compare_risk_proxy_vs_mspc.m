@@ -1,5 +1,5 @@
 function T = compare_risk_proxy_vs_mspc(windowMetrics, mspcRisk)
-%COMPARE_RISK_PROXY_VS_MSPC Build side-by-side observation candidates.
+%COMPARE_RISK_PROXY_VS_MSPC 관측 후보들을 나란히 비교할 표로 구성한다.
 
     riskProxy = windowMetrics.risk_proxy;
     hybridRisk = max(riskProxy, mspcRisk);

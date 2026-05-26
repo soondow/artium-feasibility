@@ -1,11 +1,11 @@
 function Q = compute_signal_quality(rriMs, varargin)
-%COMPUTE_SIGNAL_QUALITY Estimate an RRI window signal quality index.
+%COMPUTE_SIGNAL_QUALITY RRI window의 signal quality index를 추정한다.
 %
-% The score is intentionally transparent for an MVP:
-% - coverage penalizes missing samples
-% - physiologic range penalizes RRI outside 300-2000 ms
-% - artifact score penalizes robust outliers and abrupt jumps
-% - continuity score penalizes beat-to-beat discontinuity
+% MVP 단계에서 의도적으로 해석 가능한 점수로 구성한다:
+% - coverage는 missing sample을 penalty로 반영한다
+% - physiologic range는 300-2000 ms 밖의 RRI를 penalty로 반영한다
+% - artifact score는 robust outlier와 급격한 jump를 penalty로 반영한다
+% - continuity score는 beat-to-beat 불연속성을 penalty로 반영한다
 
     p = inputParser;
     addRequired(p, 'rriMs', @(x) isnumeric(x) && isvector(x));

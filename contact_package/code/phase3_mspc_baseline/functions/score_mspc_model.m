@@ -1,5 +1,5 @@
 function S = score_mspc_model(X, model)
-%SCORE_MSPC_MODEL Score HRV windows using T2 and Q residual statistics.
+%SCORE_MSPC_MODEL T2 및 Q 잔차 통계량으로 HRV window를 점수화한다.
 
     Z = (X - model.mu) ./ model.sigma;
     completeRows = all(isfinite(Z), 2);

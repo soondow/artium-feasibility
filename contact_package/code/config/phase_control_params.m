@@ -1,8 +1,8 @@
 function params = phase_control_params()
-%PHASE_CONTROL_PARAMS Shared Phase 2/3 observer-controller constants.
+%PHASE_CONTROL_PARAMS Phase 2/3 관찰자-제어기 공통 상수.
 %
-% These defaults are used for synthetic stress-test reproducibility. They
-% are engineering feasibility parameters, not calibrated clinical limits.
+% 이 기본값은 합성 스트레스 테스트 재현성을 위해 사용한다. 이 값들은
+% 보정된 임상 한계가 아니라 공학적 타당성 확인용 파라미터이다.
 
     params.qMinDirectAlert = 0.88;
     params.cMinDirectAlert = 0.80;

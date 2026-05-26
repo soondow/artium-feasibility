@@ -1,9 +1,9 @@
 function S = generate_synthetic_rri(scenario, varargin)
-%GENERATE_SYNTHETIC_RRI Create deterministic RRI streams for the Phase 2 MVP.
+%GENERATE_SYNTHETIC_RRI Phase 2 MVP용 deterministic RRI stream을 생성한다.
 %
-% S = generate_synthetic_rri("low_quality_artifact") returns beat-level
-% timestamps, RRI values in milliseconds, and reference masks used only for
-% demo evaluation.
+% S = generate_synthetic_rri("low_quality_artifact")는 beat 단위 timestamp,
+% millisecond 단위 RRI 값, 그리고 demo 평가에만 사용하는 reference mask를
+% 반환한다.
 
     p = inputParser;
     addRequired(p, 'scenario', @(x) ischar(x) || isstring(x));

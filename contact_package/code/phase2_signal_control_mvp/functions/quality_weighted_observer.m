@@ -1,8 +1,8 @@
 function O = quality_weighted_observer(riskProxy, q, coverage, params)
-%QUALITY_WEIGHTED_OBSERVER Dampen state updates when signal quality is poor.
+%QUALITY_WEIGHTED_OBSERVER signal quality가 낮을 때 state update를 완화한다.
 %
-% riskProxy is the observation stream from HRV/irregularity features. The
-% observer treats q*coverage as a measurement confidence gate.
+% riskProxy는 HRV/irregularity feature에서 나온 observation stream이다.
+% observer는 q*coverage를 measurement confidence gate로 사용한다.
 
     if nargin < 4 || isempty(params)
         params = struct();

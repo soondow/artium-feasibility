@@ -1,13 +1,13 @@
 function M = compute_detection_metrics(alertMask, requestMask, trueRisk, q, ...
     windowMinutes, durationDays, mergeGapWindows, qMin, trueLowQuality, confirmationMask)
-%COMPUTE_DETECTION_METRICS Summarize episode-level monitoring burden.
+%COMPUTE_DETECTION_METRICS episode 단위 모니터링 부담을 요약한다.
 %
-% Window-level counts are retained for transparency, but false alarm burden
-% is reported as contiguous alert episodes to avoid inflating rates when
-% overlapping windows fire repeatedly during the same event.
+% 투명성을 위해 window 단위 count도 보존하지만, false alarm 부담은
+% overlapping window가 같은 event에서 반복 발화할 때 rate가 부풀려지지 않도록
+% 연속 alert episode 단위로 보고한다.
 %
-% alertMask is direct alert. requestMask is request_more_data. The optional
-% confirmationMask is request_confirmation.
+% alertMask는 direct alert이고 requestMask는 request_more_data이다. 선택 입력인
+% confirmationMask는 request_confirmation이다.
 
     if nargin < 5 || isempty(windowMinutes)
         windowMinutes = 0.5;

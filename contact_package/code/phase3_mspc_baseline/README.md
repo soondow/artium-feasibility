@@ -1,34 +1,34 @@
-# Phase 3 MSPC Baseline
+# Phase 3 MSPC Baseline 안내
 
-Phase 3 adds an MSPC-based anomaly-observation baseline to the Phase 2 wearable RRI monitoring-policy testbench. It trains a PCA/MSPC normal-operating-condition model on normal, high-quality HRV windows and scores all Phase 2 windows using T2 and Q residual statistics.
+Phase 3는 Phase 2 wearable RRI monitoring-policy testbench에 MSPC 기반 anomaly-observation baseline을 추가합니다. Normal, high-quality HRV window로 PCA/MSPC normal-operating-condition model을 학습하고, T2 및 Q residual statistic으로 모든 Phase 2 window를 score합니다.
 
-## Purpose
+## 목적
 
-The MSPC score is an observation candidate, not a final decision policy. It is used to compare a process-monitoring anomaly score with the transparent hand-crafted irregularity proxy:
+MSPC score는 final decision policy가 아니라 observation candidate입니다. Process-monitoring anomaly score를 transparent hand-crafted irregularity proxy와 비교하기 위해 사용합니다:
 
 - Case A: observer input = `risk_proxy`
 - Case B: observer input = `mspc_risk`
 - Case C: observer input = `max(risk_proxy, mspc_risk)`
 
-Signal quality and coverage remain controller-stage confidence variables. If MSPC is high but signal quality is low, the Phase 2 safety gate suppresses direct alerts and routes the case to `request_more_data` or `request_confirmation`.
+Signal quality와 coverage는 controller-stage confidence variable로 유지됩니다. MSPC가 높더라도 signal quality가 낮으면 Phase 2 safety gate가 direct alert를 억제하고 해당 case를 `request_more_data` 또는 `request_confirmation`으로 routing합니다.
 
-## MSPC Normalization
+## MSPC 정규화
 
-The current MSPC-to-risk mapping is a bounded heuristic normalization for feasibility testing:
+현재 MSPC-to-risk mapping은 feasibility test용 bounded heuristic normalization입니다:
 
 ```text
 risk = 0.12 + 0.58 * (1 - exp(-0.75 * mspcScore))
 ```
 
-This mapping is not optimized and may saturate before reaching high-risk levels. Calibration is left as a next step.
+이 mapping은 최적화된 것이 아니며, high-risk level에 도달하기 전에 saturate될 수 있습니다. Calibration은 next step으로 남깁니다.
 
-## Interpretation
+## 해석
 
-MSPC is included as a process-monitoring anomaly-observation baseline. It is not yet calibrated as an improved controller input.
+MSPC는 process-monitoring anomaly-observation baseline으로 포함했습니다. 아직 improved controller input으로 calibrate된 것은 아닙니다.
 
-The MSPC score is not yet calibrated as a superior controller input. In the near-threshold-noise scenario, MSPC or hybrid observations can increase false direct-alert episodes. Therefore, Phase 3 is interpreted as a baseline comparison and calibration target.
+MSPC score는 아직 superior controller input으로 calibrate되지 않았습니다. Near-threshold-noise scenario에서는 MSPC 또는 hybrid observation이 false direct-alert episode를 증가시킬 수 있습니다. 따라서 Phase 3는 baseline comparison 및 calibration target으로 해석해야 합니다.
 
-Current near-threshold result:
+현재 near-threshold result:
 
 ```text
 near_threshold_noise / risk_proxy:
@@ -43,16 +43,16 @@ direct_alert_episode_count = 7
 false_direct_alert_episode_count = 7
 ```
 
-This result shows why the MSPC-to-risk mapping needs calibration before being used as a controller input.
+이 결과는 MSPC-to-risk mapping이 controller input으로 사용되기 전에 calibration이 필요함을 보여줍니다.
 
-## Run
+## 실행
 
 ```matlab
-cd('C:\atrium-feasibility')
+cd('C:\path\to\contact_package\code')
 run('phase3_mspc_baseline/scripts/run_phase3_mspc_demo.m')
 ```
 
-## Outputs
+## 산출물
 
 - `outputs/mspc_scores.csv`
 - `outputs/mspc_window_score_comparison.csv`
@@ -61,21 +61,21 @@ run('phase3_mspc_baseline/scripts/run_phase3_mspc_demo.m')
 - `figures/figure_06_mspc_score_trajectory.png`
 - `figures/figure_07_risk_proxy_vs_mspc.png`
 
-`outputs/mspc_window_score_comparison.csv` is the window-level comparison of the hand-crafted risk proxy, MSPC risk observation, and hybrid observation. `outputs/mspc_event_metrics.csv` reports `risk_source`, direct-alert episodes, request/confirmation episodes, total action episodes, non-risk safety-action episodes, risk-episode detection counts, `policy_transition_count`, `action_switch_count`, and `direct_alert_switch_count`. Episode/day metrics use actual `start_sec`/`stop_sec` duration; `day0_6` is only a plotting axis.
+`outputs/mspc_window_score_comparison.csv`는 hand-crafted risk proxy, MSPC risk observation, hybrid observation의 window-level comparison입니다. `outputs/mspc_event_metrics.csv`는 `risk_source`, direct-alert episode, request/confirmation episode, total action episode, non-risk safety-action episode, risk-episode detection count, `policy_transition_count`, `action_switch_count`, `direct_alert_switch_count`를 보고합니다. Episode/day metric은 실제 `start_sec`/`stop_sec` duration을 사용하며, `day0_6`은 plotting axis로만 사용합니다.
 
-## Tests
+## 테스트
 
 ```matlab
-cd('C:\atrium-feasibility')
+cd('C:\path\to\contact_package\code')
 run('phase3_mspc_baseline/tests/run_all_phase3_tests.m')
 ```
 
-The tests check that normal MSPC scores remain low, high-risk synthetic segments increase the MSPC observation, near-threshold limitations are surfaced as warnings, and duration calculations use real window time.
+Test는 normal MSPC score가 낮게 유지되는지, high-risk synthetic segment에서 MSPC observation이 증가하는지, near-threshold limitation이 warning으로 드러나는지, duration calculation이 실제 window time을 사용하는지 확인합니다.
 
-## Future Calibration
+## 향후 Calibration
 
-- Adjust MSPC-to-risk normalization.
-- Apply quality-aware MSPC score damping.
-- Tune Q/T2 limits using only normal windows.
-- Compare Q-only, T2-only, max(Q,T2), and weighted combinations.
-- Evaluate near-threshold false direct-alert sensitivity.
+- MSPC-to-risk normalization을 조정합니다.
+- Quality-aware MSPC score damping을 적용합니다.
+- Normal window만 사용해 Q/T2 limit을 tune합니다.
+- Q-only, T2-only, max(Q,T2), weighted combination을 비교합니다.
+- Near-threshold false direct-alert sensitivity를 평가합니다.

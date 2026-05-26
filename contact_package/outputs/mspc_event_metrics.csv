@@ -1,0 +1,16 @@
+scenario,risk_source,mean_observation,max_observation,direct_alert_count,direct_alert_episode_count,false_direct_alert_episode_count,false_alert_episode_count,request_episode_count,false_request_episode_count,confirmation_episode_count,false_confirmation_episode_count,action_episode_count,false_action_episode_count,nonrisk_request_episode_count,nonrisk_confirmation_episode_count,nonrisk_action_episode_count,detected_risk_episode_count,missed_risk_episode_count,action_detected_risk_episode_count,action_missed_risk_episode_count,policy_transition_count,action_switch_count,direct_alert_switch_count,controller_switch_count_deprecated,request_more_data_count,request_confirmation_count,low_quality_direct_alert_count
+normal,risk_proxy,0.144484542139739,0.221981050062261,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+normal,mspc,0.291786765253572,0.674496578365147,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+normal,hybrid,0.291937406086333,0.674496578365147,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+low_quality_artifact,risk_proxy,0.361286511285568,0.998683220074587,0,0,0,0,1,1,4,4,1,1,1,4,1,0,0,0,0,14,2,0,2,116,37,0
+low_quality_artifact,mspc,0.4005690260717,0.686359707403515,0,0,0,0,1,1,4,4,1,1,1,4,1,0,0,0,0,16,2,0,2,110,43,0
+low_quality_artifact,hybrid,0.471372269192683,0.998683220074587,0,0,0,0,1,1,4,4,1,1,1,4,1,0,0,0,0,14,2,0,2,116,37,0
+high_risk_irregular,risk_proxy,0.419624126467981,0.99980470069455,6,6,0,0,2,1,2,1,2,1,1,1,1,1,0,1,0,23,4,12,4,31,154,0
+high_risk_irregular,mspc,0.429278757608848,0.686359707403515,6,6,0,0,1,1,2,1,2,1,1,1,1,1,0,1,0,23,6,12,4,25,158,0
+high_risk_irregular,hybrid,0.525179154362783,0.99980470069455,6,6,0,0,2,1,2,1,2,1,1,1,1,1,0,1,0,23,4,12,4,31,156,0
+missing_burst,risk_proxy,0.217000082424823,0.981025953497912,0,0,0,0,1,1,0,0,1,1,1,0,1,0,0,0,0,28,28,0,2,71,0,0
+missing_burst,mspc,0.330158059065737,0.686359707403515,0,0,0,0,1,1,0,0,1,1,1,0,1,0,0,0,0,38,38,0,2,55,0,0
+missing_burst,hybrid,0.346379751945951,0.981025953497912,0,0,0,0,1,1,0,0,1,1,1,0,1,0,0,0,0,36,36,0,2,60,0,0
+near_threshold_noise,risk_proxy,0.162845723222469,0.673956951056426,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+near_threshold_noise,mspc,0.321087772607071,0.686359707403515,7,7,7,7,0,0,7,7,7,7,0,7,7,0,0,0,0,21,14,14,14,0,19,0
+near_threshold_noise,hybrid,0.321202103471525,0.686359707403515,7,7,7,7,0,0,7,7,7,7,0,7,7,0,0,0,0,21,14,14,14,0,19,0

@@ -1,0 +1,21 @@
+test_name,scenario,condition,observed_value,expected_value,pass,comment
+sqi_bounds,all,0 <= q_k <= 1,"all bounded","all bounded",1,Signal quality index remains bounded.
+coverage_bounds,all,0 <= c_k <= 1,"all bounded","all bounded",1,Coverage remains bounded.
+observer_bounds,all,0 <= x_hat_k <= 1 and 0 <= U_k <= 1,"all bounded","all bounded",1,Observer states remain bounded.
+threshold_bounds,all,tau_min <= tau_k <= tau_max,"[0.53, 0.89]","[0.42, 0.92]",1,Adaptive threshold remains bounded.
+normal_false_alert,normal,proposed false_alert_episode_count <= fixed,"0","0",1,Normal baseline should not create extra proposed false alerts.
+low_quality_alert_prohibition,low_quality_artifact,proposed direct_alert_episode_count = 0,"0","0",1,Suspicious low-quality artifact is not converted into direct alerts.
+low_quality_direct_alert_count,low_quality_artifact,q_k < q_min implies direct_alert = 0,"0","0",1,Core safety invariant for low-quality direct-alert prohibition.
+confirmation_routing,low_quality_artifact,request_confirmation_count + request_more_data_count >= 1,"153",">=1",1,Low-quality suspicious windows are routed to confirmation or more data.
+artifact_uncertainty_increase,low_quality_artifact,mean U_k during artifact > outside artifact,"0.67484","0.033495",1,Uncertainty rises when signal quality is degraded.
+high_risk_detection,high_risk_irregular,detected_risk_episode_count >= 1 and missed = 0,"1 detected, 0 missed",">=1 detected, 0 missed",1,High-risk irregular episode is detected.
+high_risk_latency_finite,high_risk_irregular,mean_detection_latency_windows is finite,"1","finite",1,Detection latency is defined for detected high-risk episode.
+missing_burst_coverage_drop,missing_burst,coverage during burst < outside burst,"0.39094","1",1,Coverage decreases during missing burst.
+missing_burst_alert_suppression,missing_burst,low_quality_direct_alert_count = 0,"0","0",1,Direct alerts remain suppressed under low coverage/quality.
+near_threshold_alert_burden,near_threshold_noise,proposed alert_episode_count < fixed alert_episode_count,"0","6",1,Refractory control reduces near-threshold alert burden.
+near_threshold_switching,near_threshold_noise,proposed policy_transition_count <= fixed,"0","12",1,Final policy transitions do not exceed fixed-threshold switching.
+global_low_quality_alert_prohibition,all,all q_k < q_min windows have direct_alert = 0,"0","0",1,No proposed direct alert is emitted below q_min.
+injected_low_quality_false_alert_prohibition,all,adaptive_alert & true_low_quality & ~true_risk = 0,"0","0",1,No direct false alert is emitted in injected low-quality non-risk windows.
+high_risk_action_detection,high_risk_irregular,direct alert or request action detects risk episode,"1 detected, 0 missed",">=1 detected, 0 missed",1,Monitoring action detection is tracked separately from direct alerts.
+request_burden_metrics,low_quality_artifact,request/action episode metrics are present and nonnegative,"request=1, action=1, nonrisk_action=1","request>=1, action>=request, nonrisk_action>=0",1,Request and total monitoring-action burden are reported separately.
+high_risk_policy_transition_limit,high_risk_irregular,policy_transition_count <= 30,"23","30",1,Final policy transitions should remain bounded during high-risk monitoring.

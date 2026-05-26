@@ -1,0 +1,5 @@
+testName,status,message
+test_mspc_normal_score_low,PASS,
+test_mspc_high_risk_score_increase,PASS,
+test_mspc_near_threshold_warning,PASS,
+test_mspc_duration_uses_real_time,PASS,

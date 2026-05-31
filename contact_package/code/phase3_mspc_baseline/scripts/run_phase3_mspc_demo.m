@@ -20,9 +20,7 @@ if ~exist(figDir, 'dir')
 end
 
 phase2Csv = fullfile(phase2Root, 'outputs', 'tables', 'window_metrics.csv');
-if ~isfile(phase2Csv)
-    run(fullfile(phase2Root, 'scripts', 'run_phase2_demo.m'));
-end
+ensurePhase2Outputs(phase2Root);
 
 W = readtable(phase2Csv);
 W.scenario = string(W.scenario);
@@ -122,6 +120,13 @@ end
 function params = observerParamsFromConfig(P)
     params = struct();
     params.alpha = P.baseObserverGain;
+end
+
+function ensurePhase2Outputs(phase2Root)
+    phase2Csv = fullfile(phase2Root, 'outputs', 'tables', 'window_metrics.csv');
+    if ~isfile(phase2Csv)
+        run(fullfile(phase2Root, 'scripts', 'run_phase2_demo.m'));
+    end
 end
 
 function params = controllerParamsFromConfig(P)

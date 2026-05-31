@@ -8,8 +8,6 @@ MATLAB/Simulink 기반 quality-aware wearable RRI monitoring policy feasibility 
 
 ## 구성
 
-- `professor_summary_1page.md`: 연구 방향 요약.
-- `phase2_engineering_report.md`: engineering formulation, safety invariant, demonstration result.
 - `figures/`: contact discussion용 핵심 figure.
 - `outputs/`: 핵심 CSV output 및 pass/fail summary.
 - `code/`: Phase 1, Phase 2, Phase 3, shared config의 정리된 MATLAB source folder.
@@ -31,9 +29,11 @@ MATLAB/Simulink 기반 quality-aware wearable RRI monitoring policy feasibility 
 cd('C:\path\to\contact_package\code')
 
 run('phase2_signal_control_mvp/scripts/run_phase2_demo.m')
+run('phase2_signal_control_mvp/scripts/run_patient_level_monitoring_demo.m')
 run('phase2_signal_control_mvp/tests/run_all_phase2_tests.m')
 
 run('phase2_signal_control_mvp/scripts/build_simulink_testbench.m')
+run('phase2_signal_control_mvp/scripts/run_public_rri_sanity_template.m')
 
 run('phase3_mspc_baseline/scripts/run_phase3_mspc_demo.m')
 run('phase3_mspc_baseline/tests/run_all_phase3_tests.m')
@@ -41,4 +41,4 @@ run('phase3_mspc_baseline/tests/run_all_phase3_tests.m')
 
 Phase 1은 reference code와 정리된 output만 포함합니다. Raw MRI/label file은 포함하지 않았습니다. Phase 1을 다시 실행하려면 `config/paths_local_template.m`을 `config/paths_local.m`으로 복사한 뒤 local raw-data path를 설정해야 합니다.
 
-Public ECG-derived RRI sanity check는 의도적으로 후속 작업으로 미뤘으며, 이 패키지의 result claim에 포함하지 않았습니다.
+Public ECG-derived RRI sanity check는 아직 clinical result claim이 아닙니다. 다만 `run_public_rri_sanity_template.m`과 `import_public_rri_csv.m`을 통해 local ECG/PPG-derived RRI CSV를 불러와 SQI/feature sanity table을 만드는 scaffold를 포함했습니다.

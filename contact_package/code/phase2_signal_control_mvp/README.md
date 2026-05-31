@@ -18,6 +18,8 @@ Phase 1 anatomy는 optional feasibility baseline이고, Phase 2가 main signal/c
 - overlapping window가 event count를 부풀리지 않도록 episode-level direct-alert, request, confirmation, total-action burden metric.
 - Numeric Simulink step-function testbench를 포함합니다.
 - Safety/pass-fail test를 포함합니다.
+- Patient-level Model A / Model B temporal monitoring scaffold를 포함합니다.
+- Public ECG/PPG-derived RRI CSV sanity-check import scaffold를 포함합니다.
 
 Simulink model은 policy concept를 보여주는 numeric step-function illustration입니다. `adaptive_threshold_controller.m`의 모든 branch와 parameter를 one-to-one으로 구현했다고 주장하지 않습니다. Metric generation의 reference implementation은 executable MATLAB script입니다.
 
@@ -30,6 +32,13 @@ MATLAB에서 실행:
 ```matlab
 cd('C:\path\to\contact_package\code')
 run('phase2_signal_control_mvp/scripts/run_phase2_demo.m')
+```
+
+Patient-level Model A/B scaffold:
+
+```matlab
+cd('C:\path\to\contact_package\code')
+run('phase2_signal_control_mvp/scripts/run_patient_level_monitoring_demo.m')
 ```
 
 Phase 2 전체 검증:
@@ -46,6 +55,14 @@ cd('C:\path\to\contact_package\code')
 run('phase2_signal_control_mvp/scripts/build_simulink_testbench.m')
 ```
 
+Public RRI CSV sanity-check template:
+
+```matlab
+cd('C:\path\to\contact_package\code')
+setenv('PUBLIC_RRI_CSV', 'C:\path\to\public_rri.csv')
+run('phase2_signal_control_mvp/scripts/run_public_rri_sanity_template.m')
+```
+
 ## 산출물
 
 - `outputs/tables/window_metrics.csv`
@@ -53,6 +70,8 @@ run('phase2_signal_control_mvp/scripts/build_simulink_testbench.m')
 - `outputs/tables/alert_log.csv`
 - `outputs/tables/phase2_pass_fail_summary.csv`
 - `outputs/tables/phase2_test_results.csv`
+- `outputs/tables/patient_level_monitoring_summary.csv`
+- `outputs/tables/public_rri_window_sanity.csv` if `PUBLIC_RRI_CSV` is provided locally
 - `outputs/simulink/phase2_signal_control_testbench.slx`
 - `outputs/simulink/simulink_step_testbench_log.csv`
 - `figures/figure_01_pipeline.png`
@@ -62,6 +81,26 @@ run('phase2_signal_control_mvp/scripts/build_simulink_testbench.m')
 - `figures/figure_05_simulink_step_testbench.png`
 
 ## 공학적 정식화
+
+### Plant / System 정의
+
+본 MVP는 환자의 실제 AF disease process를 직접 제어한다고 주장하지 않습니다. 제어 대상은 patient recovery process와 wearable measurement process에서 관측되는 monitoring policy입니다. 즉, controller는 disease 자체가 아니라 alert threshold, confirmation request, monitoring intensity, false alarm burden을 조절합니다.
+
+### Reduced-order state-space view
+
+```text
+x_t     = latent risk-state / physiological vulnerability
+y_t     = RRI/PPG-derived observation
+q_t     = signal quality
+c_t     = valid coverage
+U_t     = uncertainty
+u_t     = monitoring/control input
+
+y_t = h(x_t) + epsilon_t
+x_{t+1} = f(x_t, u_t, d_t) + w_t
+```
+
+현재 구현은 생리학적 full plant model이 아니라 reduced-order monitoring testbench입니다. `q_t`와 `c_t`는 preprocessing 결과로 버려지는 값이 아니라 observer gain, uncertainty, controller action에 직접 들어갑니다.
 
 | Variable | 의미 |
 |---|---|
@@ -165,6 +204,20 @@ Primary burden metric은 window-level request count가 아니라 episode-level a
 `outputs/tables/phase2_pass_fail_summary.csv`는 위 claim에 대한 executable pass/fail check를 기록합니다. `outputs/tables/phase2_test_results.csv`는 test runner가 생성합니다.
 
 Synthetic artifact severity는 SQI 정의 아래에서 injected low-quality window가 명확해지도록 stress-test condition으로 의도적으로 설정했습니다. 이는 physiological claim이 아닙니다.
+
+## Model A / Model B temporal scaffold
+
+`outputs/tables/patient_level_monitoring_summary.csv`는 연구계획서의 day 0-56 / day-90 temporal architecture를 위한 patient-level scaffold입니다. 현재 package에서는 각 synthetic scenario를 patient-like monitoring record로 취급합니다.
+
+Model A는 day-56 early risk-state monitor에 해당하며 다음 입력만 사용합니다.
+
+- `b_0_56`: valid-time adjusted monitoring/action burden
+- `U_patient`: patient-level uncertainty summary
+- `A_patient`: direct-alert episode burden
+- `mean_q`
+- `coverage_summary`
+
+Model B는 day-90 landmark update에 해당하며 Model A output에 `ERAF_0_90_proxy`와 monitoring intensity proxy를 추가합니다. `ERAF_0_90_proxy`는 Model B 전용 placeholder이며 Model A input에는 포함하지 않습니다. 이 구조는 temporal leakage를 막기 위한 scaffold이고 clinical outcome model이 아닙니다.
 
 ## Engineering Interpretation 해석
 

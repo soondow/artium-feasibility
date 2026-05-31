@@ -21,6 +21,7 @@ addpath(fullfile(repoRoot, 'config'));
 addpath(testDir);
 
 run(fullfile(phase2Root, 'scripts', 'build_simulink_testbench.m'));
+run(fullfile(phase2Root, 'scripts', 'run_patient_level_monitoring_demo.m'));
 
 thisFile = mfilename('fullpath');
 testDir = fileparts(thisFile);
@@ -42,6 +43,8 @@ testFiles = [
     "test_policy_switching"
     "test_threshold_bounds"
     "test_simulink_step_policy"
+    "test_patient_level_temporal_architecture"
+    "test_public_rri_import_template"
 ];
 
 testName = strings(numel(testFiles), 1);

@@ -1,0 +1,40 @@
+# Reports and notes
+*.html
+*.md
+
+# MATLAB backups / autosaves
+*.asv
+*.m~
+*.autosave
+
+# MATLAB workspace / binary data
+*.mat
+**/*workspace.mat
+
+# Raw or external data
+data_external/
+**/data/raw/
+
+# Generated outputs
+outputs/
+figures/
+**/outputs/
+**/figures/
+*.csv
+*.png
+*.jpg
+*.jpeg
+*.zip
+
+# MATLAB project auto-generated files
+resources/
+*.prj
+
+# Local or duplicate working copies
+atrium/
+atrium-feasibility/
+phase4_realdata_sanity/
+
+# OS artifacts
+.DS_Store
+Thumbs.db

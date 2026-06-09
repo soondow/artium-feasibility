@@ -1,0 +1,34 @@
+# MATLAB 백업 / 자동 저장 파일
+*.asv
+*.m~
+*.autosave
+
+# MATLAB 작업 공간 / 중간 바이너리 데이터
+*.mat
+**/*workspace.mat
+
+# 대용량 또는 외부 원자료
+data_external/
+phase4_realdata_sanity/data/raw/
+phase4_rri_csv_scaffold/data/raw/
+phase4_external_rri_csv_scaffold/data/raw/
+
+# MATLAB 프로젝트 자동 생성 파일
+resources/
+*.prj
+
+# 외부 에이전트 / 도구 캐시
+matlab-agentic-toolkit/
+**/.git/
+
+# 생성된 압축 번들
+fujiwara_contact_package.zip
+fujiwara_contact_package_clean.zip
+phase2_signal_control_mvp.zip
+*-dev.zip
+atrium-feasibility*.zip
+atrium-feasibility*.Zip
+
+# 운영체제 메타데이터
+.DS_Store
+Thumbs.db

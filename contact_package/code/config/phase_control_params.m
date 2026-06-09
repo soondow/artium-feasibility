@@ -1,8 +1,15 @@
 function params = phase_control_params()
-%PHASE_CONTROL_PARAMS Phase 2/3 관찰자-제어기 공통 상수.
+% 함수 설명:
+%   Phase 2와 Phase 3에서 공유하는 관찰자-제어기 기본 파라미터를 구성합니다.
 %
-% 이 기본값은 합성 스트레스 테스트 재현성을 위해 사용한다. 이 값들은
-% 보정된 임상 한계가 아니라 공학적 타당성 확인용 파라미터이다.
+% 입력:
+%   없음.
+%
+% 출력:
+%   params (구조체: 직접 알림 허용 조건, 적응 임계값, 불응 구간, 정책 유지 시간, 윈도우 병합 기준을 담습니다.)
+%
+% 예외:
+%   필수 필드, 입력 차원, 파일 경로가 맞지 않으면 MATLAB 기본 예외가 발생할 수 있습니다.
 
     params.qMinDirectAlert = 0.88;
     params.cMinDirectAlert = 0.80;

@@ -1,9 +1,21 @@
 function S = generate_synthetic_rri(scenario, varargin)
-%GENERATE_SYNTHETIC_RRI Phase 2 MVP용 deterministic RRI stream을 생성한다.
+% 함수 설명:
+%   Phase 2 검증에 사용할 정상, 인공물, 고위험, 결측, 경계 잡음 합성 RRI 시나리오를 생성합니다.
 %
-% S = generate_synthetic_rri("low_quality_artifact")는 beat 단위 timestamp,
-% millisecond 단위 RRI 값, 그리고 demo 평가에만 사용하는 reference mask를
-% 반환한다.
+% 입력:
+%   scenario (문자열, 비어 있을 수 없음: 생성하거나 실행할 시나리오 이름입니다.)
+%   varargin (가변 인자 목록, 비어 있을 수 있음: 이름-값 형식의 선택 파라미터입니다.)
+%
+% 출력:
+%   S (구조체 또는 테이블: 함수 목적에 따른 합성 신호, MSPC 점수, 또는 요약 결과를 담습니다.)
+%
+% 예외:
+%   지원하지 않는 시나리오 이름이 전달되거나 인자 검증 조건을 만족하지 못하면 예외가 발생합니다.
+%
+% 처리 절차:
+%   1. 기준 RRI에 호흡성 변동, 장기 표류, 난수 잡음을 더해 기본 신호를 생성합니다.
+%   2. 시나리오별로 결측, 급등락, 급격한 변화, 불규칙 패턴을 삽입합니다.
+%   3. 누적 시간으로 요청 길이를 초과한 박동을 잘라 최종 구조체를 반환합니다.
 
     p = inputParser;
     addRequired(p, 'scenario', @(x) ischar(x) || isstring(x));
@@ -135,6 +147,19 @@ function S = generate_synthetic_rri(scenario, varargin)
 end
 
 function mask = intervalMask(n, startFrac, endFrac)
+% 함수 설명:
+%   전체 길이에 대한 시작과 종료 비율로 연속 참 구간 마스크를 생성합니다.
+%
+% 입력:
+%   n (수치형 스칼라, 비어 있을 수 없음: 마스크 길이 또는 개수입니다.)
+%   startFrac (수치형 스칼라, 비어 있을 수 없음: 시작 위치 비율입니다.)
+%   endFrac (수치형 스칼라, 비어 있을 수 없음: 종료 위치 비율입니다.)
+%
+% 출력:
+%   mask (논리형 벡터: 지정 구간만 true인 마스크입니다.)
+%
+% 예외:
+%   필수 필드, 입력 차원, 파일 경로가 맞지 않으면 MATLAB 기본 예외가 발생할 수 있습니다.
     first = max(1, round(startFrac * n));
     last = min(n, round(endFrac * n));
     mask = false(n, 1);

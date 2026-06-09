@@ -1,3 +1,16 @@
+% 스크립트 설명:
+%   Phase 2 합성 RRI 시나리오 전체를 실행해 품질, HRV 특징, 관찰자, 제어기, 평가 지표와 그림을 생성합니다.
+%
+% 입력:
+%   프로젝트 설정 경로, 내부 함수, 스크립트 안에서 정의한 파라미터를 사용합니다.
+%
+% 출력:
+%   콘솔 로그, CSV 테이블, 그림, 또는 Simulink 산출물을 생성할 수 있습니다.
+%
+% 예외:
+%   파일 경로, 내부 함수 입력 조건, 저장 과정에서 발생한 MATLAB 예외가 전파될 수 있습니다.
+
+
 clear; clc; close all;
 
 thisFile = mfilename('fullpath');
@@ -95,6 +108,18 @@ fprintf('Figures: %s\n', figDir);
 disp(baselineVsProposed);
 
 function T = processScenarioWindows(W, scenario)
+% 함수 설명:
+%   시나리오 윈도우별 신호 품질과 HRV 특징을 계산해 Phase 2 기본 지표 테이블을 만듭니다.
+%
+% 입력:
+%   W (값, 비어 있을 수 없음: 함수 계산에 필요한 입력값입니다.)
+%   scenario (문자열, 비어 있을 수 없음: 생성하거나 실행할 시나리오 이름입니다.)
+%
+% 출력:
+%   T (테이블: 함수 목적에 따른 비교 결과, 전처리 결과, 또는 윈도우별 파이프라인 결과를 담습니다.)
+%
+% 예외:
+%   필수 필드, 입력 차원, 파일 경로가 맞지 않으면 MATLAB 기본 예외가 발생할 수 있습니다.
     n = height(W);
 
     q = nan(n, 1);
@@ -150,11 +175,33 @@ function T = processScenarioWindows(W, scenario)
 end
 
 function params = observerParamsFromConfig(P)
+% 함수 설명:
+%   공유 설정 구조체에서 관찰자 함수에 필요한 파라미터만 추출합니다.
+%
+% 입력:
+%   P (값, 비어 있을 수 없음: 함수 계산에 필요한 입력값입니다.)
+%
+% 출력:
+%   params (구조체: 직접 알림 허용 조건, 적응 임계값, 불응 구간, 정책 유지 시간, 윈도우 병합 기준을 담습니다.)
+%
+% 예외:
+%   필수 필드, 입력 차원, 파일 경로가 맞지 않으면 MATLAB 기본 예외가 발생할 수 있습니다.
     params = struct();
     params.alpha = P.baseObserverGain;
 end
 
 function params = controllerParamsFromConfig(P)
+% 함수 설명:
+%   공유 설정 구조체에서 적응형 제어기에 필요한 파라미터만 추출합니다.
+%
+% 입력:
+%   P (값, 비어 있을 수 없음: 함수 계산에 필요한 입력값입니다.)
+%
+% 출력:
+%   params (구조체: 직접 알림 허용 조건, 적응 임계값, 불응 구간, 정책 유지 시간, 윈도우 병합 기준을 담습니다.)
+%
+% 예외:
+%   필수 필드, 입력 차원, 파일 경로가 맞지 않으면 MATLAB 기본 예외가 발생할 수 있습니다.
     params = struct();
     params.fixedThreshold = P.fixedThreshold;
     params.baseThreshold = P.tauBase;
@@ -172,6 +219,24 @@ function params = controllerParamsFromConfig(P)
 end
 
 function T = metricsToTable(scenario, method, M, scenarioTable, directAlert, requestMoreData, requestConfirmation, qMin)
+% 함수 설명:
+%   구조체 형태의 평가 지표와 윈도우 결과를 비교 가능한 단일 행 테이블로 변환합니다.
+%
+% 입력:
+%   scenario (문자열, 비어 있을 수 없음: 생성하거나 실행할 시나리오 이름입니다.)
+%   method (문자열, 비어 있을 수 없음: 비교 대상 방법 이름입니다.)
+%   M (값, 비어 있을 수 없음: 함수 계산에 필요한 입력값입니다.)
+%   scenarioTable (테이블, 비어 있을 수 없음: 한 시나리오의 윈도우별 품질, 위험, 정책 결과입니다.)
+%   directAlert (논리형 벡터, 비어 있을 수 없음: 직접 알림 마스크입니다.)
+%   requestMoreData (논리형 벡터, 비어 있을 수 없음: 추가 데이터 요청 마스크입니다.)
+%   requestConfirmation (논리형 벡터, 비어 있을 수 없음: 확인 요청 마스크입니다.)
+%   qMin (수치형 스칼라, 비어 있을 수 있음: 낮은 품질 직접 알림 판정 기준입니다.)
+%
+% 출력:
+%   T (테이블: 함수 목적에 따른 비교 결과, 전처리 결과, 또는 윈도우별 파이프라인 결과를 담습니다.)
+%
+% 예외:
+%   필수 필드, 입력 차원, 파일 경로가 맞지 않으면 MATLAB 기본 예외가 발생할 수 있습니다.
     directAlert = logical(directAlert(:));
     requestMoreData = logical(requestMoreData(:));
     requestConfirmation = logical(requestConfirmation(:));
@@ -235,6 +300,19 @@ function T = metricsToTable(scenario, method, M, scenarioTable, directAlert, req
 end
 
 function policy = derivePolicyFromMasks(directAlert, requestMoreData, requestConfirmation)
+% 함수 설명:
+%   직접 알림, 추가 데이터 요청, 확인 요청 마스크의 우선순위로 정책 라벨을 생성합니다.
+%
+% 입력:
+%   directAlert (논리형 벡터, 비어 있을 수 없음: 직접 알림 마스크입니다.)
+%   requestMoreData (논리형 벡터, 비어 있을 수 없음: 추가 데이터 요청 마스크입니다.)
+%   requestConfirmation (논리형 벡터, 비어 있을 수 없음: 확인 요청 마스크입니다.)
+%
+% 출력:
+%   policy (문자열 배열: 액션 마스크 우선순위로 결정한 최종 정책 라벨입니다.)
+%
+% 예외:
+%   필수 필드, 입력 차원, 파일 경로가 맞지 않으면 MATLAB 기본 예외가 발생할 수 있습니다.
     n = numel(directAlert);
     policy = strings(n, 1);
 
@@ -252,6 +330,18 @@ function policy = derivePolicyFromMasks(directAlert, requestMoreData, requestCon
 end
 
 function switchCount = countPolicyEpisodeSwitches(actionMask, mergeGapWindows)
+% 함수 설명:
+%   병합된 액션 에피소드를 기준으로 정책 전환 부담을 근사 계산합니다.
+%
+% 입력:
+%   actionMask (논리형 벡터, 비어 있을 수 없음: 직접 알림과 요청 정책을 합친 액션 마스크입니다.)
+%   mergeGapWindows (수치형 스칼라, 비어 있을 수 있음: 같은 에피소드로 병합할 최대 빈 윈도우 수입니다.)
+%
+% 출력:
+%   switchCount (수치형 스칼라: 인접 원소가 달라지는 횟수입니다.)
+%
+% 예외:
+%   필수 필드, 입력 차원, 파일 경로가 맞지 않으면 MATLAB 기본 예외가 발생할 수 있습니다.
     actionEpisodes = extract_binary_episodes(logical(actionMask(:)), mergeGapWindows);
     switchCount = 2 * height(actionEpisodes);
     if ~isempty(actionMask) && actionMask(1)
@@ -263,6 +353,18 @@ function switchCount = countPolicyEpisodeSwitches(actionMask, mergeGapWindows)
 end
 
 function counts = episodeDetectionCounts(actionMask, trueRisk)
+% 함수 설명:
+%   액션 마스크가 실제 위험 에피소드를 몇 개 탐지했는지 계산합니다.
+%
+% 입력:
+%   actionMask (논리형 벡터, 비어 있을 수 없음: 직접 알림과 요청 정책을 합친 액션 마스크입니다.)
+%   trueRisk (논리형 벡터, 비어 있을 수 없음: 실제 위험 에피소드 라벨입니다.)
+%
+% 출력:
+%   counts (값: 함수 계산 결과입니다.)
+%
+% 예외:
+%   필수 필드, 입력 차원, 파일 경로가 맞지 않으면 MATLAB 기본 예외가 발생할 수 있습니다.
     actionMask = logical(actionMask(:));
     trueRisk = logical(trueRisk(:));
     riskEpisodes = extract_binary_episodes(trueRisk, 0);
@@ -281,6 +383,21 @@ function counts = episodeDetectionCounts(actionMask, trueRisk)
 end
 
 function T = buildPassFailSummary(windowMetrics, baselineVsProposed, qMin, tauMin, tauMax)
+% 함수 설명:
+%   Phase 2 데모 결과에서 핵심 안전 조건과 성능 조건의 통과 여부를 요약합니다.
+%
+% 입력:
+%   windowMetrics (테이블, 비어 있을 수 없음: Phase 2 윈도우 특징, 품질, 라벨 컬럼을 포함한 테이블입니다.)
+%   baselineVsProposed (테이블, 비어 있을 수 없음: 고정 기준선과 제안 정책의 비교 지표입니다.)
+%   qMin (수치형 스칼라, 비어 있을 수 있음: 낮은 품질 직접 알림 판정 기준입니다.)
+%   tauMin (수치형 스칼라, 비어 있을 수 없음: 적응 임계값의 하한입니다.)
+%   tauMax (수치형 스칼라, 비어 있을 수 없음: 적응 임계값의 상한입니다.)
+%
+% 출력:
+%   T (테이블: 함수 목적에 따른 비교 결과, 전처리 결과, 또는 윈도우별 파이프라인 결과를 담습니다.)
+%
+% 예외:
+%   필수 필드, 입력 차원, 파일 경로가 맞지 않으면 MATLAB 기본 예외가 발생할 수 있습니다.
     rows = {};
     rows(end + 1, :) = passFailRow('sqi_bounds', 'all', '0 <= q_k <= 1', ...
         all(windowMetrics.q >= 0 & windowMetrics.q <= 1), 'all bounded', 'all bounded', ...
@@ -315,6 +432,20 @@ function T = buildPassFailSummary(windowMetrics, baselineVsProposed, qMin, tauMi
 end
 
 function rows = addScenarioChecks(rows, W, B, qMin)
+% 함수 설명:
+%   시나리오별 기대 조건을 pass/fail 요약 행으로 누적합니다.
+%
+% 입력:
+%   rows (셀 배열, 비어 있을 수 있음: 누적 중인 pass/fail 결과 행 목록입니다.)
+%   W (값, 비어 있을 수 없음: 함수 계산에 필요한 입력값입니다.)
+%   B (테이블, 비어 있을 수 없음: 방법별 성능 비교 지표 테이블입니다.)
+%   qMin (수치형 스칼라, 비어 있을 수 있음: 낮은 품질 직접 알림 판정 기준입니다.)
+%
+% 출력:
+%   rows (값: 함수 계산 결과입니다.)
+%
+% 예외:
+%   필수 필드, 입력 차원, 파일 경로가 맞지 않으면 MATLAB 기본 예외가 발생할 수 있습니다.
     normalFixed = findMetricRow(B, "normal", "fixed_raw_threshold");
     normalProposed = findMetricRow(B, "normal", "quality_aware_controller");
     lowqProposed = findMetricRow(B, "low_quality_artifact", "quality_aware_controller");
@@ -432,11 +563,41 @@ function rows = addScenarioChecks(rows, W, B, qMin)
 end
 
 function row = passFailRow(testName, scenario, condition, passValue, observedValue, expectedValue, comment)
+% 함수 설명:
+%   단일 검증 조건의 관측값, 기대값, 통과 여부를 표준 행 형식으로 만듭니다.
+%
+% 입력:
+%   testName (문자열, 비어 있을 수 없음: 검증 조건 이름입니다.)
+%   scenario (문자열, 비어 있을 수 없음: 생성하거나 실행할 시나리오 이름입니다.)
+%   condition (문자열, 비어 있을 수 없음: 검증 조건 설명입니다.)
+%   passValue (논리형 값, 비어 있을 수 없음: 조건 통과 여부입니다.)
+%   observedValue (임의 값, 비어 있을 수 있음: 실제 관측값입니다.)
+%   expectedValue (임의 값, 비어 있을 수 있음: 기대값 또는 기준값입니다.)
+%   comment (문자열, 비어 있을 수 있음: 검증 결과의 해석 설명입니다.)
+%
+% 출력:
+%   row (값: 함수 계산 결과입니다.)
+%
+% 예외:
+%   필수 필드, 입력 차원, 파일 경로가 맞지 않으면 MATLAB 기본 예외가 발생할 수 있습니다.
     row = {string(testName), string(scenario), string(condition), ...
         stringifyValue(observedValue), stringifyValue(expectedValue), logical(passValue), string(comment)};
 end
 
 function row = findMetricRow(T, scenario, method)
+% 함수 설명:
+%   시나리오와 방법 이름에 해당하는 평가 지표 행을 하나만 조회합니다.
+%
+% 입력:
+%   T (테이블, 비어 있을 수 없음: 실제 RRI 또는 파이프라인 결과를 담은 테이블입니다.)
+%   scenario (문자열, 비어 있을 수 없음: 생성하거나 실행할 시나리오 이름입니다.)
+%   method (문자열, 비어 있을 수 없음: 비교 대상 방법 이름입니다.)
+%
+% 출력:
+%   row (값: 함수 계산 결과입니다.)
+%
+% 예외:
+%   필수 필드, 입력 차원, 파일 경로가 맞지 않으면 MATLAB 기본 예외가 발생할 수 있습니다.
     row = T(T.scenario == scenario & T.method == method, :);
     if height(row) ~= 1
         error('Expected exactly one metric row for %s / %s.', scenario, method);
@@ -444,6 +605,17 @@ function row = findMetricRow(T, scenario, method)
 end
 
 function out = stringifyValue(value)
+% 함수 설명:
+%   테이블 저장을 위해 다양한 값 타입을 문자열 표현으로 변환합니다.
+%
+% 입력:
+%   value (임의 값, 비어 있을 수 있음: 필드가 없거나 비어 있을 때 대입할 기본값입니다.)
+%
+% 출력:
+%   out (값: 함수 계산 결과입니다.)
+%
+% 예외:
+%   필수 필드, 입력 차원, 파일 경로가 맞지 않으면 MATLAB 기본 예외가 발생할 수 있습니다.
     if isstring(value) || ischar(value)
         out = string(value);
     elseif isnumeric(value) || islogical(value)
@@ -462,6 +634,17 @@ function out = stringifyValue(value)
 end
 
 function plotPipelineFigure(figDir)
+% 함수 설명:
+%   Phase 2 품질 인식 모니터링 파이프라인 개요 그림을 저장합니다.
+%
+% 입력:
+%   figDir (문자열, 비어 있을 수 없음: 그림 산출물을 저장할 폴더 경로입니다.)
+%
+% 출력:
+%   없음.
+%
+% 예외:
+%   필수 필드, 입력 차원, 파일 경로가 맞지 않으면 MATLAB 기본 예외가 발생할 수 있습니다.
     f = figure('Visible', 'off', 'Color', 'w', 'Position', [100 100 1800 520]);
     ax = axes(f);
     axis(ax, [0 1 0 1]);
@@ -502,6 +685,18 @@ function plotPipelineFigure(figDir)
 end
 
 function plotQualityObserverFigure(T, figDir)
+% 함수 설명:
+%   낮은 품질 인공물 시나리오에서 관찰자 상태와 불확실성 변화를 시각화합니다.
+%
+% 입력:
+%   T (테이블, 비어 있을 수 없음: 실제 RRI 또는 파이프라인 결과를 담은 테이블입니다.)
+%   figDir (문자열, 비어 있을 수 없음: 그림 산출물을 저장할 폴더 경로입니다.)
+%
+% 출력:
+%   없음.
+%
+% 예외:
+%   필수 필드, 입력 차원, 파일 경로가 맞지 않으면 MATLAB 기본 예외가 발생할 수 있습니다.
     Tq = T(T.scenario == "low_quality_artifact", :);
 
     f = figure('Visible', 'off', 'Color', 'w', 'Position', [100 100 1200 760]);
@@ -535,6 +730,18 @@ function plotQualityObserverFigure(T, figDir)
 end
 
 function plotThresholdComparisonFigure(T, figDir)
+% 함수 설명:
+%   고정 임계값과 적응형 품질 인식 제어기의 알림 차이를 시각화합니다.
+%
+% 입력:
+%   T (테이블, 비어 있을 수 없음: 실제 RRI 또는 파이프라인 결과를 담은 테이블입니다.)
+%   figDir (문자열, 비어 있을 수 없음: 그림 산출물을 저장할 폴더 경로입니다.)
+%
+% 출력:
+%   없음.
+%
+% 예외:
+%   필수 필드, 입력 차원, 파일 경로가 맞지 않으면 MATLAB 기본 예외가 발생할 수 있습니다.
     Ta = T(T.scenario == "low_quality_artifact", :);
 
     f = figure('Visible', 'off', 'Color', 'w', 'Position', [100 100 1200 720]);
@@ -567,6 +774,18 @@ function plotThresholdComparisonFigure(T, figDir)
 end
 
 function plotAlertLogFigure(T, figDir)
+% 함수 설명:
+%   고위험 불규칙 시나리오의 위험, 품질, 불확실성, 정책 이벤트 궤적을 시각화합니다.
+%
+% 입력:
+%   T (테이블, 비어 있을 수 없음: 실제 RRI 또는 파이프라인 결과를 담은 테이블입니다.)
+%   figDir (문자열, 비어 있을 수 없음: 그림 산출물을 저장할 폴더 경로입니다.)
+%
+% 출력:
+%   없음.
+%
+% 예외:
+%   필수 필드, 입력 차원, 파일 경로가 맞지 않으면 MATLAB 기본 예외가 발생할 수 있습니다.
     Th = T(T.scenario == "high_risk_irregular", :);
 
     f = figure('Visible', 'off', 'Color', 'w', 'Position', [100 100 1200 820]);

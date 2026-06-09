@@ -1,9 +1,15 @@
 function P = paths_local_template()
-%PATHS_LOCAL_TEMPLATE Phase 1을 다시 실행하기 전에 paths_local.m으로 복사한다.
+% 함수 설명:
+%   사용자 환경에 맞게 복사해 수정할 수 있는 로컬 경로 템플릿을 생성합니다.
 %
-% contact package에는 원본 MRI/라벨 파일이 포함되지 않는다. Phase1 스크립트를
-% 실행하기 전에 lgemri.nrrd와 laendo.nrrd가 들어 있는 case 하위 폴더를
-% 포함한 로컬 폴더를 가리키도록 P.dataRaw를 수정한다.
+% 입력:
+%   없음.
+%
+% 출력:
+%   P (구조체: 저장소 루트, 데이터 폴더, 산출물 폴더 경로를 담습니다.)
+%
+% 예외:
+%   필수 필드, 입력 차원, 파일 경로가 맞지 않으면 MATLAB 기본 예외가 발생할 수 있습니다.
 
     thisFile = mfilename('fullpath');
     configDir = fileparts(thisFile);

@@ -1,10 +1,27 @@
 function C = adaptive_threshold_controller(riskProxy, xHat, U, q, params, coverage)
-%ADAPTIVE_THRESHOLD_CONTROLLER 원시 fixed alert와 quality-aware alert를 비교한다.
+% 함수 설명:
+%   위험 관측값, 관찰자 상태, 불확실성, 신호 품질을 결합해 고정 알림과 적응형 정책을 계산합니다.
 %
-% fixed baseline은 원시 HRV risk를 직접 thresholding한다. 제안 제어기는
-% signal이 신뢰 가능할 때만 observer state를 thresholding한다.
-% 의심스럽지만 신뢰도가 낮은 window는 direct alert가 아니라 confirmation 또는
-% 추가 데이터 수집 요청으로 보낸다.
+% 입력:
+%   riskProxy (수치형 벡터, 비어 있을 수 없음: HRV 특징 또는 MSPC에서 계산한 위험 관측값입니다.)
+%   xHat (수치형 벡터, 비어 있을 수 없음: 품질 가중 관찰자가 추정한 위험 상태입니다.)
+%   U (수치형 벡터, 비어 있을 수 없음: 관찰자 불확실성입니다.)
+%   q (수치형 벡터, 비어 있을 수 없음: 각 윈도우의 신호 품질 점수입니다.)
+%   params (구조체, 비어 있을 수 있음: 임계값, 관찰자 이득, 불응 구간 등 선택 설정입니다. 비어 있으면 기본값을 사용합니다.)
+%   coverage (수치형 벡터, 비어 있을 수 있음: 각 윈도우의 유효 샘플 커버리지입니다.)
+%
+% 출력:
+%   C (테이블: 고정 임계값, 적응 임계값, 알림 마스크, 요청 마스크, 최종 정책 라벨을 담습니다.)
+%
+% 예외:
+%   입력 벡터 길이가 서로 맞지 않으면 인덱싱 또는 테이블 생성 오류가 발생할 수 있습니다.
+%
+% 처리 절차:
+%   1. 누락된 설정값을 기본 파라미터로 보완하고 입력을 열 벡터로 정규화합니다.
+%   2. 최근 알림 부담, 불확실성, 낮은 품질 패널티를 반영해 적응 임계값을 계산합니다.
+%   3. 신뢰 가능한 관측만 직접 알림 후보로 허용하고 약한 근거는 요청 정책으로 분기합니다.
+%   4. 불응 구간과 정책 유지 조건으로 반복 알림과 정책 흔들림을 줄입니다.
+%   5. 최종 액션 마스크에서 정책 라벨을 다시 생성해 로그와 지표의 의미를 일치시킵니다.
 
     if nargin < 5 || isempty(params)
         params = struct();
@@ -153,8 +170,6 @@ function C = adaptive_threshold_controller(riskProxy, xHat, U, q, params, covera
         policy(k) = candidatePolicy;
     end
 
-    % 최종 policy 동기화: policy label은 항상 최종 action mask에서
-    % 유도해야 하며, 중간 candidate만으로 정하면 안 된다.
     policy = deriveFinalPolicy(adaptiveAlert, requestMoreData, requestConfirmation);
 
     C = table(fixedThreshold, adaptiveThreshold, fixedAlert, adaptiveAlert, ...
@@ -164,12 +179,38 @@ function C = adaptive_threshold_controller(riskProxy, xHat, U, q, params, covera
 end
 
 function s = withDefault(s, name, value)
+% 함수 설명:
+%   구조체 필드가 없거나 비어 있을 때 지정한 기본값을 채웁니다.
+%
+% 입력:
+%   s (구조체, 비어 있을 수 없음: 기본값을 적용할 설정 구조체입니다.)
+%   name (문자열, 비어 있을 수 없음: 확인할 필드명입니다.)
+%   value (임의 값, 비어 있을 수 있음: 필드가 없거나 비어 있을 때 대입할 기본값입니다.)
+%
+% 출력:
+%   s (구조체: 기본값이 보완된 설정 구조체입니다.)
+%
+% 예외:
+%   필수 필드, 입력 차원, 파일 경로가 맞지 않으면 MATLAB 기본 예외가 발생할 수 있습니다.
     if ~isfield(s, name) || isempty(s.(name))
         s.(name) = value;
     end
 end
 
 function policy = deriveFinalPolicy(adaptiveAlert, requestMoreData, requestConfirmation)
+% 함수 설명:
+%   최종 액션 마스크의 우선순위에 따라 정책 라벨을 재구성합니다.
+%
+% 입력:
+%   adaptiveAlert (논리형 벡터, 비어 있을 수 없음: 직접 알림 마스크입니다.)
+%   requestMoreData (논리형 벡터, 비어 있을 수 없음: 추가 데이터 요청 마스크입니다.)
+%   requestConfirmation (논리형 벡터, 비어 있을 수 없음: 확인 요청 마스크입니다.)
+%
+% 출력:
+%   policy (문자열 배열: 액션 마스크 우선순위로 결정한 최종 정책 라벨입니다.)
+%
+% 예외:
+%   필수 필드, 입력 차원, 파일 경로가 맞지 않으면 MATLAB 기본 예외가 발생할 수 있습니다.
     n = numel(adaptiveAlert);
     policy = strings(n, 1);
 

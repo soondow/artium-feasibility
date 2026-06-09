@@ -1,3 +1,16 @@
+% 스크립트 설명:
+%   AtriaSeg 케이스 전체에 대해 좌심방 부피와 바운딩 박스 특징을 일괄 계산합니다.
+%
+% 입력:
+%   프로젝트 설정 경로, 내부 함수, 스크립트 안에서 정의한 파라미터를 사용합니다.
+%
+% 출력:
+%   콘솔 처리 로그, 중간 오버레이 PNG, 좌심방 기본 특징 CSV를 생성합니다.
+%
+% 예외:
+%   데이터 폴더, NRRD 파일, 메타데이터 필드, 결과 저장 경로 문제에서 발생한 MATLAB 예외가 전파될 수 있습니다.
+
+
 clear; clc; close all
 
 thisFile = which(mfilename);
@@ -33,7 +46,6 @@ disp(caseNames')
 
 nCase = numel(caseNames);
 
-%결과 저장 변수
 patient_id = strings(nCase,1);
 la_volume_ml = nan(nCase,1);
 

@@ -1,3 +1,16 @@
+% 테스트 설명:
+%   환자 단위 요약 테이블이 Model A/B 시간 구조와 필수 출력 범위를 만족하는지 검증합니다.
+%
+% 입력:
+%   patient_level_monitoring_summary.csv 파일을 사용합니다.
+%
+% 출력:
+%   assert 기반 검증 결과를 테스트 러너에 전달합니다.
+%
+% 예외:
+%   필수 파일, 필수 열, 값 범위, 시간 정보 분리 조건을 만족하지 않으면 assert 예외가 발생합니다.
+
+
 phase2Root = fileparts(fileparts(mfilename('fullpath')));
 tablePath = fullfile(phase2Root, 'outputs', 'tables', 'patient_level_monitoring_summary.csv');
 assert(isfile(tablePath), 'patient_level_monitoring_summary.csv must exist.');

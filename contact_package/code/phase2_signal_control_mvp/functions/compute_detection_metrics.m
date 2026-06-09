@@ -1,13 +1,31 @@
 function M = compute_detection_metrics(alertMask, requestMask, trueRisk, q, ...
     windowMinutes, durationDays, mergeGapWindows, qMin, trueLowQuality, confirmationMask)
-%COMPUTE_DETECTION_METRICS episode 단위 모니터링 부담을 요약한다.
+% 함수 설명:
+%   윈도우 단위 액션 결과를 에피소드 단위 탐지 성능과 사용자 부담 지표로 요약합니다.
 %
-% 투명성을 위해 window 단위 count도 보존하지만, false alarm 부담은
-% overlapping window가 같은 event에서 반복 발화할 때 rate가 부풀려지지 않도록
-% 연속 alert episode 단위로 보고한다.
+% 입력:
+%   alertMask (논리형 벡터, 비어 있을 수 없음: 직접 알림 발생 여부입니다.)
+%   requestMask (논리형 벡터, 비어 있을 수 없음: 추가 데이터 요청 발생 여부입니다.)
+%   trueRisk (논리형 벡터, 비어 있을 수 없음: 실제 위험 에피소드 라벨입니다.)
+%   q (수치형 벡터, 비어 있을 수 없음: 각 윈도우의 신호 품질 점수입니다.)
+%   windowMinutes (수치형 스칼라, 비어 있을 수 있음: 윈도우 시간 간격입니다.)
+%   durationDays (수치형 스칼라, 비어 있을 수 있음: 평가 기간 일수입니다.)
+%   mergeGapWindows (수치형 스칼라, 비어 있을 수 있음: 같은 에피소드로 병합할 최대 빈 윈도우 수입니다.)
+%   qMin (수치형 스칼라, 비어 있을 수 있음: 낮은 품질 직접 알림 판정 기준입니다.)
+%   trueLowQuality (논리형 벡터, 비어 있을 수 있음: 실제 낮은 품질 구간 라벨입니다.)
+%   confirmationMask (논리형 벡터, 비어 있을 수 있음: 확인 요청 발생 여부입니다.)
 %
-% alertMask는 direct alert이고 requestMask는 request_more_data이다. 선택 입력인
-% confirmationMask는 request_confirmation이다.
+% 출력:
+%   M (구조체: 알림 수, 에피소드 수, 거짓 알림률, 탐지 지연, 요청 부담, 낮은 품질 알림 비율을 담습니다.)
+%
+% 예외:
+%   입력 벡터 길이가 서로 맞지 않으면 인덱싱 오류가 발생할 수 있습니다.
+%
+% 처리 절차:
+%   1. 직접 알림, 요청, 확인 요청, 전체 액션, 실제 위험 마스크를 에피소드로 변환합니다.
+%   2. 실제 위험 에피소드 안에서 최초 직접 알림을 찾아 탐지 수와 지연 시간을 계산합니다.
+%   3. 위험 라벨과 겹치지 않는 액션 에피소드를 거짓 부담으로 집계합니다.
+%   4. 낮은 품질 구간에서 발생한 직접 알림 비율과 일 단위 요청 부담을 계산합니다.
 
     if nargin < 5 || isempty(windowMinutes)
         windowMinutes = 0.5;
@@ -63,7 +81,7 @@ function M = compute_detection_metrics(alertMask, requestMask, trueRisk, q, ...
         hit = find(alertMask(startIdx:stopIdx), 1, 'first');
         if ~isempty(hit)
             detectedEpisodes = detectedEpisodes + 1;
-            detectionLatencyWindows(end + 1, 1) = hit - 1; %#ok<AGROW>
+            detectionLatencyWindows(end + 1, 1) = hit - 1;
             if isnan(detectionLatencyMin)
                 detectionLatencyMin = (hit - 1) * windowMinutes;
             end
@@ -127,6 +145,18 @@ function M = compute_detection_metrics(alertMask, requestMask, trueRisk, q, ...
 end
 
 function n = countFalseEpisodes(episodes, trueRisk)
+% 함수 설명:
+%   실제 위험 구간과 겹치지 않는 에피소드 개수를 계산합니다.
+%
+% 입력:
+%   episodes (테이블 또는 수치형 행렬, 비어 있을 수 없음: 시작 및 종료 인덱스를 포함한 에피소드 목록입니다.)
+%   trueRisk (논리형 벡터, 비어 있을 수 없음: 실제 위험 에피소드 라벨입니다.)
+%
+% 출력:
+%   n (수치형 스칼라: 조건에 맞는 에피소드 개수입니다.)
+%
+% 예외:
+%   필수 필드, 입력 차원, 파일 경로가 맞지 않으면 MATLAB 기본 예외가 발생할 수 있습니다.
     n = 0;
     for i = 1:height(episodes)
         idx = episodes.start_idx(i):episodes.stop_idx(i);

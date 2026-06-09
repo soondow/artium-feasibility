@@ -1,3 +1,16 @@
+% 스크립트 설명:
+%   Phase 2 관찰자-제어기 정책을 수치 step 입력으로 검증하는 Simulink 테스트벤치를 생성합니다.
+%
+% 입력:
+%   프로젝트 설정 경로, 내부 함수, 스크립트 안에서 정의한 파라미터를 사용합니다.
+%
+% 출력:
+%   콘솔 로그, CSV 테이블, 그림, 또는 Simulink 산출물을 생성할 수 있습니다.
+%
+% 예외:
+%   파일 경로, 내부 함수 입력 조건, 저장 과정에서 발생한 MATLAB 예외가 전파될 수 있습니다.
+
+
 clear; clc;
 
 thisFile = mfilename('fullpath');
@@ -36,9 +49,6 @@ set_param(modelName, 'StopTime', '80');
 set_param(modelName, 'Solver', 'FixedStepDiscrete');
 set_param(modelName, 'FixedStep', '1');
 
-% Numeric step-function 시나리오:
-% t=20..55 구간은 원시 irregularity risk가 높지만 signal quality가 낮다.
-% 제어기는 direct alert 대신 confirmation/data 요청을 내야 한다.
 add_block('simulink/Sources/Constant', [modelName '/base_risk_0p15'], ...
     'Value', '0.15', 'Position', [40 65 105 95]);
 add_block('simulink/Sources/Step', [modelName '/artifact_risk_step_up'], ...
@@ -169,6 +179,17 @@ fprintf('Saved numeric Simulink testbench: %s\n', modelPath);
 fprintf('Saved Simulink log: %s\n', fullfile(outDir, 'simulink_step_testbench_log.csv'));
 
 function addLines(modelName)
+% 함수 설명:
+%   Simulink 테스트벤치 모델에 주요 신호 연결선을 추가합니다.
+%
+% 입력:
+%   modelName (문자열, 비어 있을 수 없음: Simulink 모델 이름입니다.)
+%
+% 출력:
+%   없음.
+%
+% 예외:
+%   필수 필드, 입력 차원, 파일 경로가 맞지 않으면 MATLAB 기본 예외가 발생할 수 있습니다.
     add_line(modelName, 'base_risk_0p15/1', 'Feature Extraction - risk proxy/1', 'autorouting', 'on');
     add_line(modelName, 'artifact_risk_step_up/1', 'Feature Extraction - risk proxy/2', 'autorouting', 'on');
     add_line(modelName, 'artifact_risk_step_down/1', 'Feature Extraction - risk proxy/3', 'autorouting', 'on');
@@ -226,6 +247,18 @@ function addLines(modelName)
 end
 
 function plotSimulinkTestbench(simTable, figDir)
+% 함수 설명:
+%   Simulink step 테스트벤치 실행 결과를 요약 그림으로 저장합니다.
+%
+% 입력:
+%   simTable (테이블, 비어 있을 수 없음: Simulink 테스트벤치 실행 로그입니다.)
+%   figDir (문자열, 비어 있을 수 없음: 그림 산출물을 저장할 폴더 경로입니다.)
+%
+% 출력:
+%   없음.
+%
+% 예외:
+%   필수 필드, 입력 차원, 파일 경로가 맞지 않으면 MATLAB 기본 예외가 발생할 수 있습니다.
     f = figure('Visible', 'off', 'Color', 'w', 'Position', [100 100 1200 760]);
     tl = tiledlayout(f, 3, 1, 'TileSpacing', 'compact', 'Padding', 'compact');
     title(tl, 'Simulink numeric step-function monitoring-policy testbench', 'FontWeight', 'bold');

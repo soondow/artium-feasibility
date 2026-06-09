@@ -1,3 +1,16 @@
+% 스크립트 설명:
+%   환경 변수로 지정한 공개 RRI CSV를 가져와 Phase 2 특징 추출 가능성을 점검합니다.
+%
+% 입력:
+%   PUBLIC_RRI_CSV 환경 변수에 저장된 외부 ECG/PPG 기반 RRI CSV 경로를 사용합니다.
+%
+% 출력:
+%   public_rri_window_sanity.csv에 윈도우별 품질, HRV 특징, 위험 프록시를 저장합니다.
+%
+% 예외:
+%   CSV 스키마, 파일 경로, 윈도우 분할, 특징 추출, CSV 저장 중 발생한 MATLAB 예외가 전파될 수 있습니다.
+
+
 clear; clc;
 
 thisFile = mfilename('fullpath');

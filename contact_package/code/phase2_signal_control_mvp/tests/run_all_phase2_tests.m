@@ -1,3 +1,16 @@
+% 스크립트 설명:
+%   Phase 2 데모와 Simulink 테스트벤치를 실행한 뒤 안전성 및 검증 테스트 전체를 수행합니다.
+%
+% 입력:
+%   Phase 2 함수, 설정 파일, 테스트 스크립트 경로를 사용합니다.
+%
+% 출력:
+%   각 테스트의 PASS/FAIL 결과를 콘솔과 phase2_test_results.csv에 저장합니다.
+%
+% 예외:
+%   개별 테스트 실패, 데모 산출물 생성 실패, CSV 저장 실패 시 MATLAB 예외를 발생시킵니다.
+
+
 clear; clc;
 
 thisFile = mfilename('fullpath');

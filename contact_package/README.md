@@ -1,44 +1,30 @@
-# Contact Package 안내
+# Atrium Feasibility Contact Package
 
-이 패키지는 quality-aware wearable RRI monitoring policy를 위한 간결한 MATLAB/Simulink feasibility prototype입니다. 전체 개발 repo가 아니라 교수님께 공유하기 위한 compact contact package입니다.
+이 저장소는 좌심방 해부학 특징 추출과 RRI 기반 품질 인식 모니터링 제어기를 검토하기 위한 MATLAB/Simulink 타당성 패키지입니다. 원자료와 자동 생성 프로젝트 파일은 제외하고, 교수님 공유와 재현 확인에 필요한 코드, 핵심 그림, CSV 산출물만 정리했습니다.
 
-## 핵심 메시지
+## 프로젝트 구성
 
-MATLAB/Simulink 기반 quality-aware wearable RRI monitoring policy feasibility testbench를 구현했습니다. 이 시스템은 noisy high-risk observation에서 곧바로 direct alert를 내지 않습니다. 대신 signal-quality uncertainty 아래에서 risk-state를 추정하고, observe, `request_more_data`, `request_confirmation`, `direct_alert` 중 어떤 policy action을 낼지 제어합니다.
+- `code/phase1_anatomy`: AtriaSeg 기반 좌심방 부피와 바운딩 박스 특징 추출 코드입니다.
+- `code/phase2_signal_control_mvp`: 합성 RRI 시나리오, 신호 품질 지표, 품질 가중 관찰자, 적응형 알림 제어기, Simulink 테스트벤치입니다.
+- `code/phase3_mspc_baseline`: Phase 2 특징을 이용한 MSPC 기준 모델과 위험 프록시 비교 코드입니다.
+- `figures/`: 파이프라인, 관찰자 궤적, 알림 정책, MSPC 비교 그림입니다.
+- `outputs/`: 주요 CSV 결과와 테스트 요약입니다.
 
-## 구성
+## 실행 방법
 
-- `figures/`: contact discussion용 핵심 figure.
-- `outputs/`: 핵심 CSV output 및 pass/fail summary.
-- `code/`: Phase 1, Phase 2, Phase 3, shared config의 정리된 MATLAB source folder.
-
-대용량 raw dataset, MATLAB project resource, workspace file, external-RRI scaffold file은 의도적으로 제외했습니다.
-
-## 이 패키지가 주장하지 않는 것
-
-- 진단 도구가 아닙니다.
-- recurrence-prediction 도구가 아닙니다.
-- anatomy segmentation project가 아닙니다.
-- treatment-efficacy claim이 아닙니다.
-
-## 재현 방법
-
-이 contact package의 모든 재현 명령은 MATLAB current directory가 `contact_package/code`라고 가정합니다.
+MATLAB 현재 폴더를 `contact_package/code`로 맞춘 뒤 실행합니다.
 
 ```matlab
-cd('C:\path\to\contact_package\code')
-
 run('phase2_signal_control_mvp/scripts/run_phase2_demo.m')
 run('phase2_signal_control_mvp/scripts/run_patient_level_monitoring_demo.m')
 run('phase2_signal_control_mvp/tests/run_all_phase2_tests.m')
-
-run('phase2_signal_control_mvp/scripts/build_simulink_testbench.m')
-run('phase2_signal_control_mvp/scripts/run_public_rri_sanity_template.m')
 
 run('phase3_mspc_baseline/scripts/run_phase3_mspc_demo.m')
 run('phase3_mspc_baseline/tests/run_all_phase3_tests.m')
 ```
 
-Phase 1은 reference code와 정리된 output만 포함합니다. Raw MRI/label file은 포함하지 않았습니다. Phase 1을 다시 실행하려면 `config/paths_local_template.m`을 `config/paths_local.m`으로 복사한 뒤 local raw-data path를 설정해야 합니다.
+Phase 1 원자료는 포함하지 않았습니다. Phase 1을 다시 실행하려면 `code/config/paths_local_template.m`을 `code/config/paths_local.m`으로 복사한 뒤 로컬 AtriaSeg 데이터 경로를 설정해야 합니다.
 
-Public ECG-derived RRI sanity check는 아직 clinical result claim이 아닙니다. 다만 `run_public_rri_sanity_template.m`과 `import_public_rri_csv.m`을 통해 local ECG/PPG-derived RRI CSV를 불러와 SQI/feature sanity table을 만드는 scaffold를 포함했습니다.
+## 범위
+
+이 패키지는 공학적 타당성 확인용입니다. 임상 진단, 재발 예측, 치료 효과 판정을 주장하지 않습니다.

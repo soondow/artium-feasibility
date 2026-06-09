@@ -1,6 +1,6 @@
-# Atrium Feasibility Contact Package
+# Atrium Feasibility
 
-이 저장소는 좌심방 해부학 특징 추출과 RRI 기반 품질 인식 모니터링 제어기를 검토하기 위한 MATLAB/Simulink 타당성 패키지입니다. 원자료와 자동 생성 프로젝트 파일은 제외하고, 교수님 공유와 재현 확인에 필요한 코드, 핵심 그림, CSV 산출물만 정리했습니다.
+이 저장소는 좌심방 해부학 특징 추출과 RRI 기반 품질 인식 모니터링 제어기를 검토하기 위한 MATLAB/Simulink 타당성 패키지입니다. 원자료와 자동 생성 프로젝트 파일은 제외하고, 재현 확인에 필요한 코드, 핵심 그림, CSV 산출물을 정리했습니다.
 
 ## 프로젝트 구성
 
@@ -12,7 +12,7 @@
 
 ## 실행 방법
 
-MATLAB 현재 폴더를 `contact_package/code`로 맞춘 뒤 실행합니다.
+MATLAB 현재 폴더를 `code`로 맞춘 뒤 실행합니다.
 
 ```matlab
 run('phase2_signal_control_mvp/scripts/run_phase2_demo.m')
